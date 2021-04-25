@@ -83,8 +83,11 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-beta01"
 
     //viewpager2
-    implementation 'com.google.android.material:material:1.1.0-alpha08'
+    implementation 'com.google.placandroid.material:material:1.1.0-alpha08'
     implementation 'androidx.viewpager2:viewpager2:1.0.0-beta02'
+
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-core:3.1.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.0.0'
 
     //test
     testImplementation 'junit:junit:4.+'
