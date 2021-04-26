@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.mapbox.mapboxsdk.Mapbox
@@ -13,7 +12,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.layers.TransitionOptions
-import com.mapbox.mapboxsdk.utils.BitmapUtils
 import ir.nabzi.places.R
 import ir.nabzi.places.model.Place
 import kotlinx.android.synthetic.main.fragment_places.*
@@ -53,12 +51,23 @@ class PlacesFragment : Fragment() {
                             //TODO("Not yet implemented")
                             style.setTransition(TransitionOptions(0, 0, false));
                             mapboxMap.setOnMarkerClickListener{
-                                it->Toast.makeText(requireContext() , it.title , Toast.LENGTH_SHORT).show()
+                                it->
+                                selectPlace(it.title)
+                                //Toast.makeText(requireContext() , it.title , Toast.LENGTH_SHORT).show()
                                 true
                             }
                             mapboxMap.addMarker(MarkerOptions()
-                                    .position(LatLng(40.73581, -73.99155))
+                                    .position(LatLng(35.699993,51.337527))
+                                    .title("0")
+                            )
+                            mapboxMap.addMarker(MarkerOptions()
+                                    .position(LatLng(35.7005158,51.3360464))
                                     .title("1")
+
+                            )
+                            mapboxMap.addMarker(MarkerOptions()
+                                    .position(LatLng(35.6996271,51.3378596))
+                                    .title("2")
                             )
 
                         }
@@ -67,11 +76,17 @@ class PlacesFragment : Fragment() {
         })
     }
 
-
-    private fun initLayerIcons(loadedMapStyle: Style) {
-        loadedMapStyle.addImage("place", BitmapUtils.getBitmapFromDrawable(
-                resources.getDrawable(R.drawable.ic_baseline_place_24))!!)
+    private fun selectPlace(title: String?) {
+        title?.toIntOrNull()?.let {
+            viewPager.setCurrentItem(it)
+        }
     }
+
+
+    //    private fun initLayerIcons(loadedMapStyle: Style) {
+//        loadedMapStyle.addImage("place", BitmapUtils.getBitmapFromDrawable(
+//                resources.getDrawable(R.drawable.ic_baseline_place_24))!!)
+//    }
     override fun onStart() {
         super.onStart()
         mapView.onStart()
