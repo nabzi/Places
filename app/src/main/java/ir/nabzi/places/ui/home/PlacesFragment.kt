@@ -32,9 +32,9 @@ class PlacesFragment : Fragment() {
     }
 
     val places = arrayListOf(
-        Place("id1", "cafe", "", ""),
-        Place("id2", "park", "", ""),
-        Place("id3", "school", "", "")
+        Place("id1", "cafe", "", "" , 10),
+        Place("id2", "park", "", "",9),
+        Place("id3", "school", "", "",8)
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
