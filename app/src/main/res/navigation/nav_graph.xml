@@ -16,12 +16,11 @@
     </fragment>
     <fragment
         android:id="@+id/placeDetailsFragment"
-        android:name="ir.nabzi.places.PlaceDetailsFragment"
+        android:name="ir.nabzi.places.ui.detail.PlaceDetailsFragment"
         android:label="fragment_place_details"
         tools:layout="@layout/fragment_place_details" >
         <argument
             android:name="id"
-            app:argType="integer"
-            android:defaultValue="0" />
+            app:argType="string" />
     </fragment>
 </navigation>
