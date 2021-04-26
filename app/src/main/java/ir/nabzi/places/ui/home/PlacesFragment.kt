@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.mapbox.mapboxsdk.Mapbox
@@ -18,60 +19,69 @@ import kotlinx.android.synthetic.main.fragment_places.*
 
 
 class PlacesFragment : Fragment() {
-    val ACCESS_TOKEN = "sk.eyJ1IjoibmFiemkiLCJhIjoiY2tueGFuMWJyMTRqMTJ2cW42NjUya3dzaSJ9.0uj9WisAz4Xd18I8s5rW9g"
+    val ACCESS_TOKEN =
+        "sk.eyJ1IjoibmFiemkiLCJhIjoiY2tueGFuMWJyMTRqMTJ2cW42NjUya3dzaSJ9.0uj9WisAz4Xd18I8s5rW9g"
+
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         Mapbox.getInstance(requireContext(), ACCESS_TOKEN);
         return inflater.inflate(R.layout.fragment_places, container, false)
     }
 
     val places = arrayListOf(
-            Place("id1", "cafe", "", ""),
-            Place("id2", "park", "", ""),
-            Place("id3", "school", "", "")
+        Place("id1", "cafe", "", ""),
+        Place("id2", "park", "", ""),
+        Place("id3", "school", "", "")
     )
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
-                return PlaceItemFragment.create(places[position])
+                return PlaceItemFragment.create(
+                    places[position]
+                ) { id -> Toast.makeText(requireContext(), id, Toast.LENGTH_SHORT).show() }
             }
 
             override fun getItemCount(): Int {
                 return 3
             }
+
+
         }
         mapView.onCreate(savedInstanceState);
 
         mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
             mapboxMap.setStyle(Style.MAPBOX_STREETS,
-                    object : Style.OnStyleLoaded {
-                        override fun onStyleLoaded(style: Style) {
-                            //TODO("Not yet implemented")
-                            style.setTransition(TransitionOptions(0, 0, false));
-                            mapboxMap.setOnMarkerClickListener{
-                                it->
-                                selectPlace(it.title)
-                                //Toast.makeText(requireContext() , it.title , Toast.LENGTH_SHORT).show()
-                                true
-                            }
-                            mapboxMap.addMarker(MarkerOptions()
-                                    .position(LatLng(35.699993,51.337527))
-                                    .title("0")
-                            )
-                            mapboxMap.addMarker(MarkerOptions()
-                                    .position(LatLng(35.7005158,51.3360464))
-                                    .title("1")
-
-                            )
-                            mapboxMap.addMarker(MarkerOptions()
-                                    .position(LatLng(35.6996271,51.3378596))
-                                    .title("2")
-                            )
-
+                object : Style.OnStyleLoaded {
+                    override fun onStyleLoaded(style: Style) {
+                        //TODO("Not yet implemented")
+                        style.setTransition(TransitionOptions(0, 0, false));
+                        mapboxMap.setOnMarkerClickListener { it ->
+                            selectPlace(it.title)
+                            //Toast.makeText(requireContext() , it.title , Toast.LENGTH_SHORT).show()
+                            true
                         }
+                        mapboxMap.addMarker(
+                            MarkerOptions()
+                                .position(LatLng(35.699993, 51.337527))
+                                .title("0")
+                        )
+                        mapboxMap.addMarker(
+                            MarkerOptions()
+                                .position(LatLng(35.7005158, 51.3360464))
+                                .title("1")
+
+                        )
+                        mapboxMap.addMarker(
+                            MarkerOptions()
+                                .position(LatLng(35.6996271, 51.3378596))
+                                .title("2")
+                        )
+
                     }
+                }
             )
         })
     }
@@ -82,11 +92,6 @@ class PlacesFragment : Fragment() {
         }
     }
 
-
-    //    private fun initLayerIcons(loadedMapStyle: Style) {
-//        loadedMapStyle.addImage("place", BitmapUtils.getBitmapFromDrawable(
-//                resources.getDrawable(R.drawable.ic_baseline_place_24))!!)
-//    }
     override fun onStart() {
         super.onStart()
         mapView.onStart()
@@ -102,12 +107,12 @@ class PlacesFragment : Fragment() {
         mapView.onPause()
     }
 
-     override fun onStop() {
+    override fun onStop() {
         super.onStop()
         mapView.onStop()
     }
 
-     override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         mapView.onDestroy()
     }
