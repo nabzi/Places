@@ -11,5 +11,7 @@ class PlaceRepositoryImpl(val placeDao: PlaceDao,
                           val apiServices: ApiService,
                           val gson: Gson
 ) : PlaceRepository {
+     fun getPlaces(){
 
+     }
 }
