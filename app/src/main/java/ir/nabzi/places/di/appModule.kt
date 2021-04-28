@@ -13,7 +13,7 @@ val appModule = module {
     single { Gson() }
 
     //Repository
-    single<PlaceRepository> { PlaceRepositoryImpl(get(), get(), get()) }
+    single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }
 
     //Viewmodel
     viewModel { PlaceViewModel(get()) }

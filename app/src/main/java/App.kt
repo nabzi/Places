@@ -1,3 +1,5 @@
+package ir.nabzi.places
+
 import android.app.Application
 import ir.nabzi.places.di.appModule
 import ir.nabzi.places.di.dbModule
@@ -9,9 +11,7 @@ class App : Application() {
     override fun onCreate(){
         super.onCreate()
         startKoin {
-            // declare used Android context
             androidContext(this@App)
-            // declare modules
             modules(
                 listOf(
                     appModule,
@@ -20,9 +20,5 @@ class App : Application() {
                 )
             )
         }
-
-        // Default binding components
-        //DataBindingUtil.setDefaultComponent(BindingComponent())
-
     }
 }

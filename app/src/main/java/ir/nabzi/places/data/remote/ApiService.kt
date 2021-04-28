@@ -6,7 +6,7 @@ import retrofit2.http.GET
 
 interface ApiService {
 
-    @GET("api/v1/places")
-    suspend fun getVehicleList() : Response<List<Place>>
+    @GET("/api/v1/places")
+    suspend fun getPlaceList() : Response<List<Place>>
 
 }

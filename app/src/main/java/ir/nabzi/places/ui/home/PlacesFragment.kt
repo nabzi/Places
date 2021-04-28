@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.mapbox.mapboxsdk.Mapbox
@@ -17,9 +18,14 @@ import com.mapbox.mapboxsdk.style.layers.TransitionOptions
 import ir.nabzi.places.R
 import ir.nabzi.places.model.Place
 import kotlinx.android.synthetic.main.fragment_places.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class PlacesFragment : Fragment() {
+    private val vmodel: PlaceViewModel by sharedViewModel()
     val ACCESS_TOKEN =
         "sk.eyJ1IjoibmFiemkiLCJhIjoiY2tueGFuMWJyMTRqMTJ2cW42NjUya3dzaSJ9.0uj9WisAz4Xd18I8s5rW9g"
 
@@ -27,17 +33,64 @@ class PlacesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         Mapbox.getInstance(requireContext(), ACCESS_TOKEN);
+        subscribeUi()
         return inflater.inflate(R.layout.fragment_places, container, false)
     }
 
-    val places = arrayListOf(
-        Place("id1", "cafe", "", "" , 10),
-        Place("id2", "park", "", "",9),
-        Place("id3", "school", "", "",8)
-    )
+//    val places = arrayListOf(
+//        Place("id1", "cafe", "", "" , 10),
+//        Place("id2", "park", "", "",9),
+//        Place("id3", "school", "", "",8)
+//    )
+    private fun subscribeUi() {
+        this.lifecycleScope.launch {
+            vmodel.placeList.collect { resource ->
+                resource?.data?.let {
+                    showPlaces(it)
+                }
+            }
+        }
+    }
+
+    private fun showPlaces(places : List<Place>) {
+        initViewPager(places)
+        initMap(places)
+    }
+
+    private fun initMap(places: List<Place>) {
+        mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
+            mapboxMap.setStyle(Style.MAPBOX_STREETS,
+                object : Style.OnStyleLoaded {
+                    override fun onStyleLoaded(style: Style) {
+                        style.setTransition(TransitionOptions(0, 0, false));
+
+                        for (place in places)
+                            mapboxMap.addMarker(
+                                MarkerOptions()
+                                    .position(LatLng(place.loc_lat, place.loc_lng))
+                                    .title(place.id)
+                            )
+                        mapboxMap.setOnMarkerClickListener { it ->
+                            selectPlace(it.title)
+                            //Toast.makeText(requireContext() , it.title , Toast.LENGTH_SHORT).show()
+                            true
+                        }
+                    }
+                }
+            )
+        })
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        mapView.onCreate(savedInstanceState);
+
+
+    }
+
+    private fun initViewPager(places : List<Place>) {
         viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
                 return PlaceItemFragment.create(
@@ -50,45 +103,9 @@ class PlacesFragment : Fragment() {
             }
 
             override fun getItemCount(): Int {
-                return 3
+                return places.size
             }
-
-
         }
-        mapView.onCreate(savedInstanceState);
-
-        mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
-            mapboxMap.setStyle(Style.MAPBOX_STREETS,
-                object : Style.OnStyleLoaded {
-                    override fun onStyleLoaded(style: Style) {
-                        //TODO("Not yet implemented")
-                        style.setTransition(TransitionOptions(0, 0, false));
-                        mapboxMap.setOnMarkerClickListener { it ->
-                            selectPlace(it.title)
-                            //Toast.makeText(requireContext() , it.title , Toast.LENGTH_SHORT).show()
-                            true
-                        }
-                        mapboxMap.addMarker(
-                            MarkerOptions()
-                                .position(LatLng(35.699993, 51.337527))
-                                .title("0")
-                        )
-                        mapboxMap.addMarker(
-                            MarkerOptions()
-                                .position(LatLng(35.7005158, 51.3360464))
-                                .title("1")
-
-                        )
-                        mapboxMap.addMarker(
-                            MarkerOptions()
-                                .position(LatLng(35.6996271, 51.3378596))
-                                .title("2")
-                        )
-
-                    }
-                }
-            )
-        })
     }
 
     private fun selectPlace(title: String?) {

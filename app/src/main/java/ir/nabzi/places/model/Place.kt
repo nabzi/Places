@@ -11,9 +11,11 @@ import kotlinx.android.parcel.Parcelize
 data class Place
     (
     @PrimaryKey
-    val id: String,
-    val title: String,
-    val subTitle: String,
-    val imageUrl: String,
-    val rating: Int,
+    val id:         String,
+    val title:      String,
+    val subTitle:   String,
+    val imageUrl:   String,
+    val rating:     Int,
+    val loc_lat :   Double,
+    val loc_lng :   Double
 ) : Parcelable
