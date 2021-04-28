@@ -10,8 +10,6 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        mapbox:mapbox_cameraTargetLat="35.699993"
-        mapbox:mapbox_cameraTargetLng="51.337527"
         mapbox:mapbox_cameraZoom="15"
         />
     <!-- A ViewPager2 element with a TabLayout -->

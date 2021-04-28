@@ -11,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
@@ -21,7 +23,6 @@ import kotlinx.android.synthetic.main.fragment_places.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.sharedViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class PlacesFragment : Fragment() {
@@ -48,13 +49,14 @@ class PlacesFragment : Fragment() {
         this.lifecycleScope.launch {
             vmodel.placeList.collect { resource ->
                 resource?.data?.let {
-                    showPlaces(it)
+                    if(it.isNotEmpty())
+                         showPlaces(it)
                 }
             }
         }
     }
 
-    private fun showPlaces(places : List<Place>) {
+    private fun showPlaces(places: List<Place>) {
         initViewPager(places)
         initMap(places)
     }
@@ -65,11 +67,15 @@ class PlacesFragment : Fragment() {
                 object : Style.OnStyleLoaded {
                     override fun onStyleLoaded(style: Style) {
                         style.setTransition(TransitionOptions(0, 0, false));
-
+                        val position = CameraPosition.Builder()
+                            .target(LatLng(places[1].location_lat, places[1].location_lng))
+                            .zoom(15.0)
+                            .build()
+                        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 1000);
                         for (place in places)
                             mapboxMap.addMarker(
                                 MarkerOptions()
-                                    .position(LatLng(place.loc_lat, place.loc_lng))
+                                    .position(LatLng(place.location_lat, place.location_lng))
                                     .title(place.id)
                             )
                         mapboxMap.setOnMarkerClickListener { it ->
@@ -84,13 +90,10 @@ class PlacesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         mapView.onCreate(savedInstanceState);
-
-
     }
 
-    private fun initViewPager(places : List<Place>) {
+    private fun initViewPager(places: List<Place>) {
         viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
                 return PlaceItemFragment.create(

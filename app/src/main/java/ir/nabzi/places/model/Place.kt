@@ -16,6 +16,6 @@ data class Place
     val subTitle:   String,
     val imageUrl:   String,
     val rating:     Int,
-    val loc_lat :   Double,
-    val loc_lng :   Double
+    val location_lat :   Double,
+    val location_lng :   Double
 ) : Parcelable
