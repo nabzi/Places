@@ -22,4 +22,7 @@ abstract class PlaceDao {
 
     @Query("SELECT * FROM place " )
     abstract fun getPlacesFLow(): Flow<List<Place>>
+
+    @Query("SELECT * FROM place " )
+    abstract fun getPlaces(): List<Place>
 }

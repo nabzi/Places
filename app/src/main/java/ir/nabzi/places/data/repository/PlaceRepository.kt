@@ -55,8 +55,12 @@ class PlaceRepositoryImpl(val placeDao: PlaceDao,
                         Resource.error<List<Place>>(
                             resource.message ?: "error loading from server", dbData
                         )
-                    } else
-                        Resource.success(resource.data)
+                    } else {
+                        resource.data?.let {
+                            placeDao.addList(it)
+                        }
+                        Resource.success(placeDao.getPlaces())
+                    }
                 )
             }
         return stateFlow

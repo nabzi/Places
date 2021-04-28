@@ -39,11 +39,6 @@ class PlacesFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_places, container, false)
     }
 
-//    val places = arrayListOf(
-//        Place("id1", "cafe", "", "" , 10),
-//        Place("id2", "park", "", "",9),
-//        Place("id3", "school", "", "",8)
-//    )
     private fun subscribeUi() {
         this.lifecycleScope.launch {
             vmodel.placeList.collect { resource ->
@@ -138,8 +133,9 @@ class PlacesFragment : Fragment() {
     }
 
     override fun onDestroy() {
+        mapView?.onDestroy()
         super.onDestroy()
-        mapView.onDestroy()
+
     }
 
     override fun onLowMemory() {
