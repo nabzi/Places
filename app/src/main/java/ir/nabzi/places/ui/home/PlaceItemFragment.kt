@@ -21,7 +21,7 @@ class PlaceItemFragment : Fragment() {
         requireArguments().getParcelable<Place>(KEY_PLACE)?.let{
             placeview.bind(it)
         }
-        return placeview.view
+        return placeview.binding.root
     }
 
     companion object {
