@@ -35,8 +35,7 @@ class PlacesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        Mapbox.getInstance(requireContext(), ACCESS_TOKEN);
-        subscribeUi()
+        Mapbox.getInstance(requireContext(), ACCESS_TOKEN)
         return inflater.inflate(R.layout.fragment_places, container, false)
     }
 
@@ -91,6 +90,7 @@ class PlacesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mapView.onCreate(savedInstanceState);
+        subscribeUi()
     }
 
     private fun initViewPager(places: List<Place>) {
@@ -113,7 +113,7 @@ class PlacesFragment : Fragment() {
 
     private fun selectPlace(title: String?) {
         title?.toIntOrNull()?.let {
-            viewPager.setCurrentItem(it)
+            viewPager.setCurrentItem(it-1)
         }
     }
 
