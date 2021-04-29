@@ -10,7 +10,7 @@ import ir.nabzi.places.R
 import ir.nabzi.places.databinding.ItemPlaceLayoutBindingImpl
 import ir.nabzi.places.model.Place
 
-class PlaceView(layoutInflater: LayoutInflater, container: ViewGroup?, val onClick: CALLBACK) {
+class PlaceView(layoutInflater: LayoutInflater, container: ViewGroup?, val onClick: CALLBACK?) {
     val binding : ItemPlaceLayoutBindingImpl = DataBindingUtil.inflate(
         layoutInflater,
         R.layout.item_place_layout, container,false
@@ -19,7 +19,7 @@ class PlaceView(layoutInflater: LayoutInflater, container: ViewGroup?, val onCli
         with(binding) {
             placeitem = place
             cvPlace.setOnClickListener {
-                onClick(place.id)
+                onClick?.invoke(place.id)
             }
             executePendingBindings()
         }

@@ -43,8 +43,8 @@ class PlacesFragment : Fragment() {
         this.lifecycleScope.launch {
             vmodel.placeList.collect { resource ->
                 resource?.data?.let {
-                    if(it.isNotEmpty())
-                         showPlaces(it)
+                    if (it.isNotEmpty())
+                        showPlaces(it)
                 }
             }
         }
@@ -65,7 +65,10 @@ class PlacesFragment : Fragment() {
                             .target(LatLng(places[1].location_lat, places[1].location_lng))
                             .zoom(15.0)
                             .build()
-                        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 1000);
+                        mapboxMap.animateCamera(
+                            CameraUpdateFactory.newCameraPosition(position),
+                            1000
+                        );
                         for (place in places)
                             mapboxMap.addMarker(
                                 MarkerOptions()
@@ -89,15 +92,18 @@ class PlacesFragment : Fragment() {
     }
 
     private fun initViewPager(places: List<Place>) {
-        viewPager.adapter = object : FragmentStateAdapter(this) {
+        viewPager?.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
-                return PlaceItemFragment.create(
+                 return PlaceItemFragment.create(
                     places[position]
-                ) { id -> Toast.makeText(requireContext(), id, Toast.LENGTH_SHORT).show()
+                ) { id ->
+                    Toast.makeText(requireContext(), id, Toast.LENGTH_SHORT).show()
                     findNavController().navigate(
-                        PlacesFragmentDirections.actionPlacesFragmentToPlaceDetailsFragment(places[position].id)
+                        PlacesFragmentDirections.actionPlacesFragmentToPlaceDetailsFragment(id)
                     )
                 }
+
+
             }
 
             override fun getItemCount(): Int {
@@ -108,7 +114,7 @@ class PlacesFragment : Fragment() {
 
     private fun selectPlace(title: String?) {
         title?.toIntOrNull()?.let {
-            viewPager.setCurrentItem(it-1)
+            viewPager.setCurrentItem(it - 1)
         }
     }
 
