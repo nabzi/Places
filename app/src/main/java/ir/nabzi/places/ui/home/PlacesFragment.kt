@@ -97,9 +97,9 @@ class PlacesFragment : Fragment() {
                  return PlaceItemFragment.create(
                     places[position]
                 ) { id ->
-                    Toast.makeText(requireContext(), id, Toast.LENGTH_SHORT).show()
+                     vmodel.id.postValue(id)
                     findNavController().navigate(
-                        PlacesFragmentDirections.actionPlacesFragmentToPlaceDetailsFragment(id)
+                        PlacesFragmentDirections.actionPlacesFragmentToPlaceDetailsFragment()
                     )
                 }
 
