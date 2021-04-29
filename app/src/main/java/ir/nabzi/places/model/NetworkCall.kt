@@ -32,15 +32,15 @@ abstract class NetworkCall<ResultType> {
 
         } catch (e: ConnectException) {
             e.printStackTrace()
-            Resource.error("",null, ConnectException)
+            Resource.error("Network Connection error",null, ConnectException)
 
         } catch (e: SocketTimeoutException) {
             e.printStackTrace()
-            Resource.error("",null, SocketTimeoutException)
+            Resource.error( "Network Connection error",null, SocketTimeoutException)
 
         }catch (e : UnknownHostException){
             e.printStackTrace()
-            Resource.error("",null, UnknownHostException)
+            Resource.error("Network Connection error",null, UnknownHostException)
 
         }catch (e : JSONException){
             e.printStackTrace()

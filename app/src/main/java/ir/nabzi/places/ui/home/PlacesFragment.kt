@@ -18,7 +18,9 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.layers.TransitionOptions
 import ir.nabzi.places.R
+import ir.nabzi.places.ir.nabzi.places.ui.showError
 import ir.nabzi.places.model.Place
+import ir.nabzi.places.model.Status
 import kotlinx.android.synthetic.main.fragment_places.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -46,8 +48,20 @@ class PlacesFragment : Fragment() {
                     if (it.isNotEmpty())
                         showPlaces(it)
                 }
+                when(resource?.status){
+                    Status.SUCCESS ->   showProgress(false)
+                    Status.ERROR -> {
+                        showProgress(false)
+                        showError(resource.message)
+                    }
+                    Status.LOADING -> showProgress(true)
+                }
             }
         }
+    }
+
+    private fun showProgress(show: Boolean) {
+        progressBar.visibility = if (show) View.GONE else View.VISIBLE
     }
 
     private fun showPlaces(places: List<Place>) {

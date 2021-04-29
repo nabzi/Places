@@ -23,8 +23,9 @@ interface PlaceRepository {
     ): StateFlow<Resource<List<Place>>?>
 }
 
-class PlaceRepositoryImpl(val placeDao: PlaceDao,
-                          val apiServices: ApiService
+class PlaceRepositoryImpl(
+    val placeDao: PlaceDao,
+    val apiServices: ApiService
 ) : PlaceRepository {
     override fun getPlaces(
         shouldFetch: Boolean,
@@ -67,11 +68,11 @@ class PlaceRepositoryImpl(val placeDao: PlaceDao,
     }
 
     private suspend fun pullPlacesFromServer(): Resource<List<Place>> {
-        var result: Resource<List<Place>> = object  : NetworkCall<List<Place>>(){
-             override suspend fun createCall(): Response<List<Place>> {
-                 return apiServices.getPlaceList()
-             }
-         }.fetch()
+        var result: Resource<List<Place>> = object : NetworkCall<List<Place>>() {
+            override suspend fun createCall(): Response<List<Place>> {
+                return apiServices.getPlaceList()
+            }
+        }.fetch()
         return result
     }
 }
