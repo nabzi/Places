@@ -31,39 +31,28 @@ class PlaceRepositoryImpl(
         shouldFetch: Boolean,
         coroutineScope: CoroutineScope
     ): StateFlow<Resource<List<Place>>?> {
-        var dbData: List<Place>? = null
-        var stateFlow: MutableStateFlow<Resource<List<Place>>?> = MutableStateFlow(null)
-        var dataFlow = if (shouldFetch)
-            placeDao.getPlacesFLow().map {
-                dbData = it
-                Resource.loading(it)
-            }
-        else
-            placeDao.getPlacesFLow().map {
-                dbData = it
-                Resource.success(it)
-            }
-        coroutineScope.launch {
-            dataFlow.collect {
-                stateFlow.emit(it)
-            }
-        }
-        if (shouldFetch)
-            coroutineScope.launch(Dispatchers.IO) {
+        var stateFlow: MutableStateFlow<Resource<List<Place>>?> =
+            MutableStateFlow(Resource.loading(null))
+        coroutineScope.launch(Dispatchers.IO) {
+            stateFlow.emit(if (shouldFetch) {
                 val resource = pullPlacesFromServer()
-                stateFlow.emit(
-                    if (resource.status == Status.ERROR) {
-                        Resource.error<List<Place>>(
-                            resource.message ?: "error loading from server", dbData
-                        )
-                    } else {
-                        resource.data?.let {
-                            placeDao.addList(it)
-                        }
-                        Resource.success(placeDao.getPlaces())
+
+                if (resource.status == Status.ERROR) {
+                    Resource.error<List<Place>>(
+                        resource.message ?: "error loading from server", placeDao.getPlaces()
+                    )
+                } else {
+                    resource.data?.let {
+                        placeDao.addList(it)
                     }
-                )
+                    Resource.success(placeDao.getPlaces())
+                }
+
+            } else {
+                Resource.success(placeDao.getPlaces())
             }
+            )
+        }
         return stateFlow
     }
 
