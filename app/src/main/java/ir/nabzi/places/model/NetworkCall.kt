@@ -10,6 +10,10 @@ import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
+/**
+ *   NetworkCall<ResultType> is an abstract class that can be used for api calls.
+ *   It manages error cases and returns proper error message and error code
+ *   */
 abstract class NetworkCall<ResultType> {
     suspend fun fetch(): Resource<ResultType> {
         return try {

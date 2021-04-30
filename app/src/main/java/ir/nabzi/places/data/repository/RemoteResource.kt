@@ -4,6 +4,13 @@ import ir.nabzi.places.model.Place
 import ir.nabzi.places.model.Resource
 import ir.nabzi.places.model.Status
 
+/**
+*   RemoteResource<ResultType> is an abstract class that can be used for resources that can be fetched
+ *   from remote server or database.
+ *   If parameter "shouldFetch" is set to true, we always fetch data from server and update database,
+ *   and it can be set to "data == nullOrEmpty()" if we want to load data from remote server if
+ *   data is not present in database yet.
+* */
 abstract class RemoteResource<ResultType> {
     suspend fun get(shouldFetch : Boolean): Resource<ResultType>{
         return if (shouldFetch) {
