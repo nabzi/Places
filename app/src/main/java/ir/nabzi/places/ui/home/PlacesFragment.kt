@@ -59,7 +59,7 @@ class PlacesFragment : Fragment() {
     }
 
     private fun showProgress(show: Boolean) {
-        progressBar.visibility = if (show) View.GONE else View.VISIBLE
+        progressBar.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     private fun showPlaces(places: List<Place>) {
