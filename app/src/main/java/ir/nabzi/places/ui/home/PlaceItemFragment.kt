@@ -16,24 +16,22 @@ class PlaceItemFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val placeview = PlaceView(layoutInflater, container, clickListener)
+        val placeView = PlaceView(layoutInflater, container, clickListener)
         requireArguments().getParcelable<Place>(KEY_PLACE)?.let{
-            placeview.bind(it)
+            placeView.bind(it)
         }
-        return placeview.binding.root
+        return placeView.binding.root
     }
 
     companion object {
         const val KEY_PLACE = "key_place"
         fun create(place: Place, listener: CALLBACK): PlaceItemFragment {
-
-            val frag =  PlaceItemFragment().apply {
+            return PlaceItemFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(KEY_PLACE, place)
                 }
+                clickListener = listener
             }
-            frag.clickListener = listener
-            return frag
         }
     }
 }

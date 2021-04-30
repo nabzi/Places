@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -18,6 +17,7 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.layers.TransitionOptions
 import ir.nabzi.places.R
+import ir.nabzi.places.ir.nabzi.places.ui.MAP_ACCESS_TOKEN
 import ir.nabzi.places.ir.nabzi.places.ui.showError
 import ir.nabzi.places.model.Place
 import ir.nabzi.places.model.Status
@@ -29,15 +29,13 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class PlacesFragment : Fragment() {
     private val vmodel: PlaceViewModel by sharedViewModel()
-    val ACCESS_TOKEN =
-        "sk.eyJ1IjoibmFiemkiLCJhIjoiY2tueGFuMWJyMTRqMTJ2cW42NjUya3dzaSJ9.0uj9WisAz4Xd18I8s5rW9g"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        Mapbox.getInstance(requireContext(), ACCESS_TOKEN)
+        Mapbox.getInstance(requireContext(), MAP_ACCESS_TOKEN)
         return inflater.inflate(R.layout.fragment_places, container, false)
     }
 
@@ -71,32 +69,28 @@ class PlacesFragment : Fragment() {
 
     private fun initMap(places: List<Place>) {
         mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
-            mapboxMap.setStyle(Style.MAPBOX_STREETS,
-                object : Style.OnStyleLoaded {
-                    override fun onStyleLoaded(style: Style) {
-                        style.setTransition(TransitionOptions(0, 0, false));
-                        val position = CameraPosition.Builder()
-                            .target(LatLng(places[1].location_lat, places[1].location_lng))
-                            .zoom(15.0)
-                            .build()
-                        mapboxMap.animateCamera(
-                            CameraUpdateFactory.newCameraPosition(position),
-                            1000
-                        );
-                        for (place in places)
-                            mapboxMap.addMarker(
-                                MarkerOptions()
-                                    .position(LatLng(place.location_lat, place.location_lng))
-                                    .title(place.id)
-                            )
-                        mapboxMap.setOnMarkerClickListener { it ->
-                            selectPlace(it.title)
-                            //Toast.makeText(requireContext() , it.title , Toast.LENGTH_SHORT).show()
-                            true
-                        }
-                    }
+            mapboxMap.setStyle(Style.MAPBOX_STREETS
+            ) { style ->
+                style.transition = TransitionOptions(0, 0, false);
+                val position = CameraPosition.Builder()
+                    .target(LatLng(places[1].location_lat, places[1].location_lng))
+                    .zoom(15.0)
+                    .build()
+                mapboxMap.animateCamera(
+                    CameraUpdateFactory.newCameraPosition(position),
+                    1000
+                );
+                for (place in places)
+                    mapboxMap.addMarker(
+                        MarkerOptions()
+                            .position(LatLng(place.location_lat, place.location_lng))
+                            .title(place.id)
+                    )
+                mapboxMap.setOnMarkerClickListener { it ->
+                    selectPlace(it.title)
+                    true
                 }
-            )
+            }
         })
     }
 
@@ -111,7 +105,7 @@ class PlacesFragment : Fragment() {
                  return PlaceItemFragment.create(
                     places[position]
                 ) { id ->
-                     vmodel.id.postValue(id)
+                     vmodel.selectedPlaceId.postValue(id)
                     findNavController().navigate(
                         PlacesFragmentDirections.actionPlacesFragmentToPlaceDetailsFragment()
                     )
