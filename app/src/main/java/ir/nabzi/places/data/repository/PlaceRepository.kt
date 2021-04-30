@@ -3,6 +3,7 @@ package ir.nabzi.places.data.repository
 import com.google.gson.Gson
 import ir.nabzi.places.data.db.PlaceDao
 import ir.nabzi.places.data.remote.ApiService
+import ir.nabzi.places.ir.nabzi.places.data.repository.RemoteResource
 import ir.nabzi.places.model.NetworkCall
 import ir.nabzi.places.model.Place
 import ir.nabzi.places.model.Resource
@@ -17,9 +18,8 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 
 interface PlaceRepository {
-    fun getPlaces(
-        shouldFetch: Boolean,
-        coroutineScope: CoroutineScope
+    suspend fun getPlaces(
+        shouldFetch: Boolean
     ): StateFlow<Resource<List<Place>>?>
 }
 
@@ -27,41 +27,30 @@ class PlaceRepositoryImpl(
     val placeDao: PlaceDao,
     val apiServices: ApiService
 ) : PlaceRepository {
-    override fun getPlaces(
-        shouldFetch: Boolean,
-        coroutineScope: CoroutineScope
-    ): StateFlow<Resource<List<Place>>?> {
+
+    override suspend fun getPlaces(shouldFetch: Boolean): StateFlow<Resource<List<Place>>?> {
         var stateFlow: MutableStateFlow<Resource<List<Place>>?> =
             MutableStateFlow(Resource.loading(null))
-        coroutineScope.launch(Dispatchers.IO) {
-            stateFlow.emit(if (shouldFetch) {
-                val resource = pullPlacesFromServer()
-
-                if (resource.status == Status.ERROR) {
-                    Resource.error<List<Place>>(
-                        resource.message ?: "error loading from server", placeDao.getPlaces()
-                    )
-                } else {
-                    resource.data?.let {
-                        placeDao.addList(it)
-                    }
-                    Resource.success(placeDao.getPlaces())
+        stateFlow.emit(
+            object : RemoteResource<List<Place>>() {
+                override suspend fun updateDB(result: List<Place>) {
+                    placeDao.addList(result)
                 }
 
-            } else {
-                Resource.success(placeDao.getPlaces())
-            }
-            )
-        }
+                override fun getFromDB(): List<Place> {
+                    return placeDao.getPlaces()
+                }
+
+                override suspend fun pullFromServer(): Resource<List<Place>> {
+                    return object : NetworkCall<List<Place>>() {
+                        override suspend fun createCall(): Response<List<Place>> {
+                            return apiServices.getPlaceList()
+                        }
+                    }.fetch()
+                }
+            }.get(true)
+        )
         return stateFlow
     }
 
-    private suspend fun pullPlacesFromServer(): Resource<List<Place>> {
-        var result: Resource<List<Place>> = object : NetworkCall<List<Place>>() {
-            override suspend fun createCall(): Response<List<Place>> {
-                return apiServices.getPlaceList()
-            }
-        }.fetch()
-        return result
-    }
 }
