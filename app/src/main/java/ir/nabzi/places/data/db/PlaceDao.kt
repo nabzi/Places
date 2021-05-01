@@ -18,11 +18,5 @@ abstract class PlaceDao {
     abstract suspend fun addList(list: List<Place>)
 
     @Query("SELECT * FROM place " )
-    abstract fun getPlacesLivedata(): LiveData<List<Place>>
-
-    @Query("SELECT * FROM place " )
-    abstract fun getPlacesFLow(): Flow<List<Place>>
-
-    @Query("SELECT * FROM place " )
     abstract fun getPlaces(): List<Place>
 }

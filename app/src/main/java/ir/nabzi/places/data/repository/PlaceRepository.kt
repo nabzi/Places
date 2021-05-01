@@ -34,23 +34,40 @@ class PlaceRepositoryImpl(
         stateFlow.emit(
             object : RemoteResource<List<Place>>() {
                 override suspend fun updateDB(result: List<Place>) {
-                    placeDao.addList(result)
+                    updateDBSource(result)
                 }
 
                 override fun getFromDB(): List<Place> {
-                    return placeDao.getPlaces()
+                    return getPlacesFromDBSource()
                 }
 
                 override suspend fun pullFromServer(): Resource<List<Place>> {
-                    return object : NetworkCall<List<Place>>() {
-                        override suspend fun createCall(): Response<List<Place>> {
-                            return apiServices.getPlaceList()
-                        }
-                    }.fetch()
+                    return getPlacesFromRemoteSource()
                 }
             }.get(true)
         )
         return stateFlow
+    }
+
+    /**Data Sources:
+     * This functions can be placed in classes
+     * PlaceDBSource and PlaceRemoteSource if they are large
+     * and added as dependency for repository
+    **/
+    private suspend fun updateDBSource(result : List<Place>) {
+        placeDao.addList(result)
+    }
+
+    private fun getPlacesFromDBSource(): List<Place> {
+        return placeDao.getPlaces()
+    }
+
+    private suspend fun getPlacesFromRemoteSource(): Resource<List<Place>> {
+        return object : NetworkCall<List<Place>>() {
+            override suspend fun createCall(): Response<List<Place>> {
+                return apiServices.getPlaceList()
+            }
+        }.fetch()
     }
 
 }
