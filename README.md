@@ -1,6 +1,5 @@
 # Places
-Android task , using Mapbox to show places on map, and Viewpager with FragmentStateAdapter  to show place items when you click on map markers. 
-
+Android task , using Mapbox to show places on map, and Viewpager  to show place items when you click on map markers. By clicking on viewpager items, user navigates to detail information about the place.
 
 This sample project demonstrates use of android architecture components and kotlin coroutines to implement MVVM architecture for a two page location-based application.
 
