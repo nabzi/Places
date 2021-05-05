@@ -9,14 +9,14 @@ import org.koin.dsl.module
 
 val dbModule = module {
     fun provideDatabase(application: Application): DB {
-        return Room.databaseBuilder(application, DB::class.java, "quote").build()
+        return Room.databaseBuilder(application, DB::class.java, "place").build()
     }
 
-    fun provideQuoteDao(database: DB): PlaceDao {
+    fun providePlaceDao(database: DB): PlaceDao {
         return database.placeDao()
     }
 
     single { provideDatabase(androidApplication()) }
 
-    single { provideQuoteDao(get()) }
+    single { providePlaceDao(get()) }
 }
